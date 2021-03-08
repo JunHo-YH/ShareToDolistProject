@@ -2,6 +2,7 @@
 {% block content %}
     <link rel="stylesheet" type="text/css" href="../static/todomain.css">
     <link rel="stylesheet" type="text/css" href="../static/todo.css">
+	<link rel="stylesheet" type="text/css" href="../static/css/index.css" >
 	<div class="main">
 		<div class="left">
 			<div class="left-items">
@@ -14,6 +15,15 @@
 				  			<div class="js-toDoProgressBar toDoProgressBar"></div>
 						</div>
 					</div>
+				</div>
+				<div id="main">
+				  <div id="chat">
+					<!-- 채팅 메시지 영역 -->
+				  </div>
+				  <div>
+					<input type="text" id="test" placeholder="메시지를 입력해주세요..">
+					<button onclick="send()">전송</button>
+				  </div>
 				</div>
 			</div>
 		</div>
@@ -34,4 +44,7 @@
 		</div>
     </div>
     <script type="text/javascript" src="../static/js/pages/todo.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+<!--    <script src="/js/index.js"></script>-->
+	 <script src="../static/js/index.js"></script>
 {% endblock %}
