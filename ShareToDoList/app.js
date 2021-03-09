@@ -24,7 +24,7 @@ app.use('/js', express.static('./static/js'))
 
 /* Get 방식으로 / 경로에 접속하면 실행 됨 */
 /* fs.readFile('./static/index.html', function(err, data) {*/
-app.get('/', function(request, response) { 
+app.get('/todolist', function(request, response) {
   fs.readFile('./templates/todolist.html', function(err, data) {
     if(err) {
       response.send('에러')
