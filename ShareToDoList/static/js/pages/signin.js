@@ -1,15 +1,15 @@
 function init() {
-    emailEvent();
+    nameEvent();
     
 }
-let email = document.querySelector('#inputID').value; // 정규식 체크하려고 email변수를 전역변수로 만들었습니다.
+let uname = document.querySelector('#inputName').value; // 정규식 체크하려고 email변수를 전역변수로 만들었습니다.
 
-async function emailEvent() {
-    const inputId = document.getElementById('inputID');
-    const err_name = document.getElementById('inputName')
+async function nameEvent() {
+    // const inputId = document.getElementById('inputID');
+    const inputName = document.getElementById('inputName')
     const button = document.querySelectorAll('input[type=submit]')[0];
 
-    err_name.addEventListener('focusout', event => {    // 이름을 입력안했을 경우, button disabled
+    inputName.addEventListener('focusout', event => {    // 이름을 입력안했을 경우, button disabled
         let name = document.querySelector('#inputName').value === "";
         if (name) {
             button.disabled = true;
@@ -29,21 +29,22 @@ async function emailEvent() {
     });
 
     inputId.addEventListener('focusout', event => {
-        email = event.target.value;
-        let route = '/emailCheck';
+        uname = event.target.value;
+        let route = '/nameCheck';
         const data = {
-            "email": email
+            
+            "name": uname
         };
 
-        sendEmailAJAX(data, route);
+        sendNameAJAX(data, route);
     });
 
-    async function sendEmailAJAX(data, route) {
+    async function sendNameAJAX(data, route) {
         try {
             await sendXMLRequest(data, 'http://' + location.host + route, 'POST')
                 .then(res => {
                     const data = JSON.parse(res);
-                    if (email.includes('@')) { // 정규식 체크
+                    // 정규식 체크
                         if (data.ok === 'true') {
                             // 사용가능한 이메일이므로 성공했다는 메세지를 아래에 띄워줌 && button disable 상태 풀어주기 && 에러메세지 제거
                             button.disabled = false;
@@ -51,7 +52,7 @@ async function emailEvent() {
                             button.classList.add('hover:bg-purple-400');
                             button.classList.add('bg-purple-500');
                             document.getElementById('error-message').style.color = 'blue';
-                            document.getElementById('error-message').innerText= '사용 가능한 이메일입니다.';
+                            document.getElementById('error-message').innerText= '사용 가능한 닉네임입니다.';
                         } else {
                             // 사용 불가능하므로 메세지를 아래에 띄워 줌 && button 상태 disable로 변경 && 에러메세지 표시
                             button.disabled = true;
@@ -59,21 +60,8 @@ async function emailEvent() {
                             button.classList.remove('hover:bg-purple-400');
                             button.classList.remove('bg-purple-500');
                             document.getElementById('error-message').style.color = 'red';
-                            document.getElementById('error-message').innerText= '이미 존재하는 이메일입니다.';
+                            document.getElementById('error-message').innerText= '이미 존재하는 닉네임입니다.';
                         }
-                    } else {
-                        button.classList.add('bg-gray-400');
-                        button.classList.remove('hover:bg-purple-400');
-                        button.classList.remove('bg-purple-500');
-                        button.disabled = true;
-                        document.getElementById('error-message').style.color = 'red';
-                        document.getElementById('error-message').innerText= "이메일 주소에 '@'를 포함해 주세요💕";
-                    }
-
-                    
-                    
-                
-
                 })
                 .catch(err => {
                     console.error('error!', err.statusText);

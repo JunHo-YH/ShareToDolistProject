@@ -30,15 +30,15 @@ def mainpage():
 @app.route('/login', methods=["post", "get"])
 def loginpage():
     Error = None
-    id = request.form.get('id')  # 초기값 = None
+    name = request.form.get('name')  # 초기값 = None
     pwd = request.form.get('pwd')
     db_cnt = db_count()[0]['COUNT(*)']
     db = select()
-    if id != None and pwd != None:
+    if name != None and pwd != None:
         for count in range(db_cnt):
             # id not exist error
-            Error = "ID does not exist"
-            if id not in db[count]['ID']: pass
+            Error = "Name does not exist"
+            if name not in db[count]['NAME']: pass
             # password diff error
             elif db[count]['PWD'] != pwd:
                 Error = "Password does not match"; break
@@ -52,17 +52,20 @@ def loginpage():
 
 @app.route('/signin', methods=["post", "get"])
 def sign_in_page():
-    id = request.form.get('id')
-    
-    sign_idCheck(id) # 아이디 중복체크
 
-    # 아이디 사용가능
-    pwd = request.form.get('pwd')
     name = request.form.get('name')
-    if id != None:
-        insert(id, pwd, name)
-        return redirect('/login')
+    # 이름 사용가능
+    pwd = request.form.get('pwd')
+    print('이름', name)
+    print('비밀번호', pwd)
+
+    if name != None:
+        if(sign_nameCheck(name)):  # 이름 중복체크
+            insert(name, pwd)
+            print("실행중")
+            return redirect('/login')
     return render_template('signin.html')
+
 
 
 # {/id={room.id}}
@@ -70,16 +73,16 @@ def sign_in_page():
 def todopage():
     return render_template("todolist.html")
 
-@app.route('/emailCheck', methods=['POST'])  
-def emailCheck():
+@app.route('/nameCheck', methods=['POST'])  
+def js_nameCheck():
     # data를 기준으로 데이터베이스에  있는지 확인 후 있으면 response에 false, 없으면 true
     data = request.get_json()
-    id = data['email']
+    name = data['name']
     global response
     response = 'true' # js로 넘어갈 값이기 때문에 소문자 true반환
 
-    response = emailTypeCheck(id) # 정규식 체크
-    response = email_idCheck(id) # id중복체크
+    # response = emailTypeCheck(id) # 정규식 체크
+    response = asyn_nameCheck(name) # id중복체크
 
     return jsonify(ok = response)
 
@@ -122,8 +125,8 @@ def selectroom():
     return result
 
 
-def insert(id, pwd,name):
-    sql = f"INSERT INTO `member`(ID, PWD, NAME) VALUES ('{id}', '{pwd}', '{name}');"
+def insert(name,pwd):
+    sql = f"INSERT INTO `member`(NAME, PWD) VALUES ('{name}', '{pwd}');"
     cursor.execute(sql)
     todo_db.commit()
 
@@ -148,16 +151,16 @@ def db_get_id():
     return m_id
   
 
-def emailTypeCheck(id):  # 정규식 체크
-    p = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$') # 이메일 정규식
-    reg = p.match(id) != None 
-    if (reg == False):
-            response = 'false'
-            return response  
+# def emailTypeCheck(id):  # 정규식 체크
+#     p = re.compile('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$') # 이메일 정규식
+#     reg = p.match(id) != None 
+#     if (reg == False):
+#             response = 'false'
+#             return response  
         
 
-def email_idCheck(id):
-    sql = f"SELECT id FROM `member` WHERE id = '{id}';"
+def asyn_nameCheck(name):
+    sql = f"SELECT NAME FROM `member` WHERE name = '{name}';"
     cursor.execute(sql)
     result = cursor.fetchone()
     if (result != None):
@@ -168,17 +171,18 @@ def email_idCheck(id):
         return response
 
 
-def sign_idCheck(id):
-    sql = f"SELECT ID FROM `member` WHERE ID = '{id}';"
+def sign_nameCheck(name):
+    sql = f"SELECT NAME FROM `member` WHERE NAME = '{name}';"
     cursor.execute(sql)
     result = cursor.fetchone()
 
-    if (result != None): # 아이디가 없으면
-       pass
+    if (result != None):
+        return False
     else:
-        return
-      
+        return True #사용가능
 
+sign_nameCheck('홍길동')
+sign_nameCheck('강준호')
 
 app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
