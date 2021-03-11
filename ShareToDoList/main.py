@@ -121,8 +121,8 @@ def searchByWord(word):
 ########### connect DB
 todo_db = pymysql.connect(
     user='root',
-    # passwd='jj123100!!',
-    passwd='5180',
+    passwd='jj123100!!',
+    # passwd='5180',
     host='127.0.0.1',
     # host='mysql',
     db='todolist',
