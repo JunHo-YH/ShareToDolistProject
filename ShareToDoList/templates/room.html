@@ -195,4 +195,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://use.fontawesome.com/19d3e4fe13.js"></script>
+    <script type="text/javascript">
+        const socket = io.connet('http://localhost:5000');
+
+        socket.io('connet', function() {
+            socket.emit('room_event', {
+                data: 'User Connected',
+            });
+        };
+    </script>
 {% endblock %}

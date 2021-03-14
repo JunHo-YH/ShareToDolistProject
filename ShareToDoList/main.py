@@ -8,7 +8,7 @@ app.secret_key = 'super secret key'
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = 'private-key'
 socketio = SocketIO(app)
-socketio.init_app(app, cors_allowed_origins="*")
+socketio.init_app(app=app, cors_allowed_origins='*')
 rooms = []
 
 @app.route('/', methods=["post", "get"])
@@ -120,11 +120,13 @@ def searchByWord(word):
 
 ########### connect DB
 todo_db = pymysql.connect(
-    user='root',
-    passwd='jj123100!!',
+    user='monty',
+    passwd='pass',
+    # user='root',
+    # passwd='jj123100!!',
     # passwd='5180',
-    host='127.0.0.1',
-    # host='mysql',
+    # host='127.0.0.1',
+    host='mysql',
     db='todolist',
     charset='utf8',
 )
@@ -212,4 +214,5 @@ def handle_my_custom_event(json, methods=['GET', 'POST']):
     socketio.emit('my response', callback=todoList(json))
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=True)
+    socketio.run(app)
